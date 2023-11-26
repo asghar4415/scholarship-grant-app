@@ -1,0 +1,333 @@
+TITLE "scholarship Grant application"
+
+include irvine32.inc
+INCLUDE macros.inc
+
+BUFFER_SIZE = 5000
+
+.data
+H1 BYTE "			()()()()  ()()()  ()    ()   ()()   ()       ()()    ()()   ()()()() ()    () ()()()() ()()() ",0
+H2 BYTE "			()       ()       ()    () ()    () ()     ()    () ()   () ()       ()    ()    ()    ()   ()",0
+H3 BYTE "			()()()() ()       ()()()() ()    () ()     ()()()() ()()()  ()()()() ()()()()    ()    ()()() ",0
+H4 BYTE "			      () ()       ()    () ()    () ()     ()    () ()  ()        () ()    ()    ()    ()     ",0
+H5 BYTE "			()()()()  ()()()  ()    ()   ()()   ()()() ()    () ()   () ()()()() ()    () ()()()() ()     ",0
+
+
+H6 BYTE "			          ()()()     ()()     ()()    ()    () ()()()()        ()()   ()()()  ()()()  ",0
+H7 BYTE "			         ()         ()   () ()    () () ()  ()    ()         ()    () ()   () ()   () ",0
+H8 BYTE "			         ()  ()()() ()()()  ()()()() ()  () ()    ()         ()()()() ()()()  ()()()  ",0
+H9 BYTE "			         ()  ()  () ()  ()  ()    () ()   ()()    ()         ()    () ()      ()      ",0
+H10 BYTE "			          ()()   () ()   () ()    () ()    ()     ()         ()    () ()      ()      ",0
+MEM BYTE "    GROUP MEMBERS:",0
+MEM1 BYTE "Asghar Ali      (22k-4415)",0
+MEM2 BYTE "Abdullah Shafiq (22k-4489)",0
+MEM3 BYTE "Muhammad Bilal  (22k-4242)",0
+var BYTE 15
+
+
+msg BYTE "PRESS ANY KEY TO CONTINUE.... ",0
+msg1 BYTE "ARE YOU?:",0
+msg2 BYTE "1) ADMIN",0
+msg3 BYTE "2) STUDENT",0
+msg4 BYTE "3) QUIT",0
+msg5 BYTE "ENTER YOUR CHOICE: ",0
+CHOICE byte ?
+
+   buffer BYTE BUFFER_SIZE DUP(?)
+    filename BYTE "F:\FAST\3rd semester\COAL lab\project\admin\admin.txt",0
+    fileHandle HANDLE ?
+
+    adminid byte 50 dup(?)
+    adminidprompt byte "Enter ID: ", 0
+    adminid1 byte 50 dup(?)
+
+    adminname byte 50 dup(?)
+
+    adminpass byte 50 dup(?)
+    adminpassprompt byte "Enter Password: ", 0
+    adminpass1 byte 50 dup(?)
+    count= 50
+
+    str1 byte "admin approved",0
+    space byte " ", 0
+
+adminapprove byte 0
+
+adminstr byte "Invalid Admin Credentials", 0
+
+
+
+.code
+main proc
+
+call Display
+retry:
+call Menu
+
+cmp CHOICE, 1
+je firstOption
+
+cmp CHOICE, 2
+;je secondOption
+
+cmp CHOICE, 3
+;je thirdOption
+
+firstOption:
+call storeinbuffer
+call inputadmin
+call seperatingadmincr
+call checkadmin
+
+cmp adminapprove, 1
+je adminportal
+mov edx, offset adminstr
+call writestring
+call clrscr
+jmp retry
+
+adminportal:
+;call adminportal
+call dumpregs
+exit 
+main endp
+
+Display PROC
+call crlf
+mov edx,offset H1
+call writestring
+call crlf
+mov edx,offset H2
+call writestring
+call crlf
+mov edx,offset H3
+call writestring
+call crlf
+mov edx,offset H4
+call writestring
+call crlf
+mov edx,offset H5
+call writestring
+
+mov dh,7
+mov dl,0
+call gotoxy
+mov edx,offset H6
+call writestring
+call crlf
+mov edx,offset H7
+call writestring
+call crlf
+mov edx,offset H8
+call writestring
+call crlf
+mov edx,offset H9
+call writestring
+call crlf
+mov edx,offset H10
+call writestring
+
+
+mov edx,0
+mov dh,18
+mov dl,45
+call gotoxy
+mov edx,offset MEM
+call writestring
+mov edx,0
+mov dh,19
+mov dl,45
+call gotoxy
+mov edx,offset MEM1
+call writestring
+mov edx,0
+mov dh,20
+mov dl,45
+call gotoxy
+mov edx,offset MEM2
+call writestring
+mov edx,0
+mov dh,21
+mov dl,45
+call gotoxy
+mov edx,offset MEM3
+call writestring
+
+
+mov edx,0
+mov dl,40
+mov dh,25
+call gotoxy
+mov edx,offset msg
+call writestring
+call readChar
+call clrscr
+ret
+Display ENDP
+
+Menu PROC
+mov edx,0
+mov dh,5
+mov dl,50
+call gotoxy
+mov edx,offset msg1
+call writestring
+
+mov edx,0
+mov dh,7
+mov dl,50
+call gotoxy
+mov edx,offset msg2
+call writestring
+
+
+mov edx,0
+mov dh,8
+mov dl,50
+call gotoxy
+mov edx,offset msg3
+call writestring
+
+
+mov edx,0
+mov dh,9
+mov dl,50
+call gotoxy
+mov edx,offset msg4
+call writestring
+
+mov edx,0
+mov dh,10
+mov dl,50
+call gotoxy
+mov edx,offset msg5
+call writestring
+CALL READINT
+MOV CHOICE, AL
+
+ret
+Menu ENDP
+
+
+storeinbuffer proc
+
+mov edx, OFFSET filename
+    call OpenInputFile
+    mov fileHandle, eax
+
+    mov edx, OFFSET buffer
+    mov ecx, BUFFER_SIZE
+    call ReadFromFile
+    mov buffer[eax], 0 
+
+
+mov eax, fileHandle
+    call CloseFile
+
+ret
+storeinbuffer endp
+
+inputadmin proc
+
+  mov edx, offset adminidprompt
+    call writestring
+    
+    mov edx, offset adminid1
+    mov ecx, SIZEOF adminid1
+    call readstring
+    mov byte ptr [edx], 0 ; Null-terminate adminpass
+
+    mov edx, offset adminpassprompt
+    call writestring
+    
+    mov edx, offset adminpass1
+    mov ecx, SIZEOF adminpass1
+    call readstring
+    mov byte ptr [edx], 0 ; Null-terminate adminid
+
+ret
+inputadmin endp
+
+seperatingadmincr proc
+
+mov edx, OFFSET buffer
+
+    mov ecx, lengthof buffer
+    mov esi, 0
+    mov ebx, 0
+
+l1:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next1
+    mov [adminid+ebx], al
+    inc esi
+    inc ebx
+    loop l1
+
+next1:
+    mov ecx, lengthof buffer
+    mov ebx, 0
+    add esi, 1
+
+l2:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next2
+    mov [adminname+ebx], al
+    inc esi
+    inc ebx
+    loop l2
+
+next2:
+    mov ecx, lengthof buffer
+    mov ebx, 0
+    add esi, 1
+
+l3:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next3
+    mov [adminpass+ebx], al
+    inc esi
+    inc ebx
+    loop l3
+
+next3:
+   call crlf
+
+ret
+seperatingadmincr endp
+
+checkadmin proc
+
+mov esi, offset adminid
+mov edi, offset adminid1
+cmpsd
+je next1
+jmp close
+next1:
+mov esi, offset adminpass
+mov edi, offset adminpass1
+cmpsd
+je next2
+jmp close
+
+next2:
+mov al, adminapprove
+mov al, 1
+mov adminapprove, al
+jmp endd
+
+close:
+mov al, adminapprove
+mov al, 0
+mov adminapprove, al
+
+endd:
+
+ret 
+checkadmin endp
+
+end main
+

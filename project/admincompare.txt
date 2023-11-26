@@ -1,0 +1,168 @@
+INCLUDE Irvine32.inc
+INCLUDE macros.inc
+
+BUFFER_SIZE = 5000
+
+.DATA
+    buffer BYTE BUFFER_SIZE DUP(?)
+    filename BYTE "F:\FAST\3rd semester\COAL lab\project\admin\admin.txt",0
+    fileHandle HANDLE ?
+
+    adminid byte 50 dup(?)
+    adminidprompt byte "Enter ID: ", 0
+    adminid1 byte 50 dup(?)
+
+    adminname byte 50 dup(?)
+
+    adminpass byte 50 dup(?)
+    adminpassprompt byte "Enter Password: ", 0
+    adminpass1 byte 50 dup(?)
+    count= 50
+
+    str1 byte "admin approved",0
+    space byte " ", 0
+
+.CODE
+main PROC
+
+call storeinbuffer
+call inputadmin
+call seperatingadmincr
+
+mov edx, offset adminid
+call writestring
+call crlf
+mov edx, offset adminid1
+call writestring
+call crlf
+
+mov edx, offset adminpass
+call writestring
+call crlf
+mov edx, offset adminpass1
+call writestring
+call crlf
+call checkadmin
+
+    exit
+main ENDP
+
+storeinbuffer proc
+
+mov edx, OFFSET filename
+    call OpenInputFile
+    mov fileHandle, eax
+
+    mov edx, OFFSET buffer
+    mov ecx, BUFFER_SIZE
+    call ReadFromFile
+    mov buffer[eax], 0 
+
+
+mov eax, fileHandle
+    call CloseFile
+
+ret
+storeinbuffer endp
+
+inputadmin PROC
+    ; Prompt for and read the admin ID
+    mov edx, offset adminidprompt
+    call writestring
+    
+    mov edx, offset adminid1
+    mov ecx, SIZEOF adminid1
+    call readstring
+    mov byte ptr [edx + ecx - 1], 0 ; Null-terminate the input
+
+    ; Prompt for and read the admin password
+    mov edx, offset adminpassprompt
+    call writestring
+   
+    mov edx, offset adminpass1
+    mov ecx, SIZEOF adminpass1
+    call readstring
+    mov byte ptr [edx + ecx - 1], 0 ; Null-terminate the input
+
+    ret
+inputadmin ENDP
+
+seperatingadmincr proc
+
+mov edx, OFFSET buffer
+
+    mov ecx, lengthof buffer
+    mov esi, 0
+    mov ebx, 0
+
+l1:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next1
+    mov [adminid+ebx], al
+    inc esi
+    inc ebx
+    loop l1
+
+next1:
+    mov ecx, lengthof buffer
+    mov ebx, 0
+    add esi, 1
+
+l2:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next2
+    mov [adminname+ebx], al
+    inc esi
+    inc ebx
+    loop l2
+
+next2:
+    mov ecx, lengthof buffer
+    mov ebx, 0
+    add esi, 1
+
+l3:
+    mov al, [buffer+esi]
+    cmp al, space
+    je next3
+    mov [adminpass+ebx], al
+    inc esi
+    inc ebx
+    loop l3
+
+next3:
+
+ret
+seperatingadmincr endp
+
+checkadmin PROC
+
+    ;mov esi, OFFSET adminid1
+    ;mov edi, OFFSET adminid
+    ;repe cmpsb
+    ;jne admin_not_approved ; Jump if not equal
+
+    ; Uncomment the following lines if you want to compare passwords as well
+    ;mov esi, OFFSET adminpass
+    ;mov edi, OFFSET adminpass1
+    ;repe cmpsb ; Compare admin password strings
+    ;jne admin_not_approved ; Jump if not equal
+
+    ; If execution reaches here, admin is approved
+    ;mov edx, OFFSET str1
+    ;call WriteString
+    ;jmp end_checkadmin
+
+;admin_not_approved:
+    ;mov edx, OFFSET str2
+    ;call WriteString
+
+;end_checkadmin:
+    call Crlf
+    ret
+checkadmin ENDP
+
+
+END main
