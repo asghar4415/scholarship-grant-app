@@ -8,9 +8,7 @@ Welcome to the Scholarship Grant System! This assembly language project automate
 
 ### Requirements
 
-1. **Assembly Compiler:** Ensure you have an assembly language compiler installed on your system. If you don't have one, you can use [MASM](https://www.masm32.com/download.htm) for Windows or [NASM](https://www.nasm.us/) for Linux.
-
-2. **Text Editor:** A text editor for viewing and copying the assembly code. You can use any text editor like Notepad, Visual Studio Code, or Visual Studio.
+1. **Text Editor/Assembly Compiler:** Ensure you have an assembly language compiler installed on your system. A text editor for viewing and copying the assembly code. You can use any text editor like Notepad, Visual Studio Code, or Visual Studio.
 
 ### Steps
 
